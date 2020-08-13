@@ -1,6 +1,6 @@
 ---
 id: 37
-title: 'Why you shouldn&#8217;t run two Rails apps on the same server'
+title: 'Why you should not run two Rails apps on the same server'
 date: 2018-08-08T00:00:33+00:00
 author: Aike
 layout: post

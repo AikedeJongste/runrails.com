@@ -23,7 +23,7 @@ categories:
 
 <!--more-->
 
-### With your mouse {.p1}
+### 1 - With your mouse
 
 <p class="p1">
   Almost every setting in Tmux can be applied while running Tmux and through the .tmux.conf config file. Applying settings while running Tmux is a convenient way to test if they do what you expect. If  you press ctrl + b then type
@@ -33,7 +33,7 @@ categories:
 
 Scrolling with your mouse should work now. To make this setting permanent you have to add it to your config without th colon in front of it. Tmux has 2 config files: ~/.tmux.conf in your home directory for your personal settings and /etc/tmux.conf for the system wide config file. I recommend that you only make changes to your personal config. That will also override any setting made in the system wide config.
 
-### With keyboard shortcuts
+### 2 - With keyboard shortcuts
 
 <p class="p1">
   Scrolling with keys is enabled by default in Tmux. Just press ctrl + b then [ to move around with the arrow keys.
