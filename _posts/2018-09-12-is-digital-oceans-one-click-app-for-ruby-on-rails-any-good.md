@@ -1,6 +1,6 @@
 ---
 id: 92
-title: 'Is Digital Ocean&#8217;s One-click app for Ruby on Rails any good?'
+title: 'Is Digital Oceans One-click app for Ruby on Rails any good?'
 date: 2018-09-12T17:22:21+00:00
 author: Aike
 layout: post
