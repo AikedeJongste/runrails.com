@@ -28,7 +28,7 @@ twitter_username: runrails
 github_username:  aikedejongste
 google_analytics: UA-112485660-2
 
-theme: jekyll-theme-minimal
+theme: minima
 plugins:
   - jekyll-feed
   - jekyll-sitemap
