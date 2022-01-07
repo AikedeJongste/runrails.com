@@ -32,6 +32,12 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-sitemap
+  - jekyll-analytics
+  
+jekyll_analytics:
+  Matomo:                   
+    url: m.runrails.com 
+    siteId: "1"          
 
 exclude:
   - .sass-cache/
