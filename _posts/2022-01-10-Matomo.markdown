@@ -9,7 +9,7 @@ This is my default recipe for self hosted website analytics. I use Matomo, forme
 
 I suggest you start with the smallest VPS and choose the latest Ubuntu LTS release. Then use the web interface to configure a firewall that only allows traffic over ports 22, 80 and 443. This is important because containers can open ports and override iptables firewalls. And I don’t want to risk leaking data because something started a dashboard or some service that isn’t secure. 
 
-Before we install Matomo we need to do 2 things:
+## Ubuntu basics:
 
 1. Install prerequisites
     
@@ -23,7 +23,9 @@ Before we install Matomo we need to do 2 things:
   {% highlight bash %}
   dpkg-reconfigure -plow unattended-upgrades
   {% endhighlight %}
-    
+   
+  I have a sample config for automatic upgrades that updates everything, automatically removes old packages and reboots when necessary. You can get it [here](https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades) or download it to the right location with:
+   
   {% highlight bash %}
   wget https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades -O /etc/apt/apt.conf.d/50unattended-upgrades
   {% endhighlight %}
@@ -33,13 +35,13 @@ Before we install Matomo we need to do 2 things:
 
 You can use named volumes in the docker-compose file but I prefer bind mounts to a local directory. Volumes hide the files somewhere in the Docker directory and with bind mounts you can see the files, check disk usage and make backups. So we need to manually create some directories:
 
-  {% highlight bash %} mkdir -p /opt/matomo/{caddy_config,caddy_data,matomo_data,mysql_db} {% endhighlight %}
+{% highlight bash %} mkdir -p /opt/matomo/{caddy_config,caddy_data,matomo_data,mysql_db} {% endhighlight %}
   
 And a docker-compose file:
 
 {% highlight bash %}
-wget [https://raw.githubusercontent.com/AikedeJongste/compose-files/main/Matomo/docker-compose.yml](https://raw.githubusercontent.com/AikedeJongste/compose-files/main/Matomo/docker-compose.yml) -O /opt/matomo/docker-compose.yml
- {% endhighlight %}
+wget https://raw.githubusercontent.com/AikedeJongste/compose-files/main/Matomo/docker-compose.yml -O /opt/matomo/docker-compose.yml
+{% endhighlight %}
 
 Create an .env file in /opt/matomo:
 
@@ -60,7 +62,7 @@ date +%s | sha256sum | base64 | head -c 12 ; echo
 
 DOMAIN is the url you want to access Matomo on. Make sure you add the dns record beforehand because Caddy will immediately request a certiticate. I usually use some short subdomain. For example m.runrails.com.
 
-## Start containers
+## Start containers:
 
 Start the whole thing in the foreground with: 
 
@@ -73,4 +75,4 @@ I usually check the output for errors and if everything works I stop it and star
 
 ## Monitoring:
 
-Every application you run should also have at least one monitoring check. And this whole setup should restart automatically after the server is rebooted but it is good to keep an eye on it. [https://updown.io/r/vw0un](https://updown.io/r/vw0un) is my recommended tool for this. I have set it to check for the text “Username” on the page so I know the page is not displaying some error. Another benefit is that it notifies you if the certificate is about to expire. Caddy should automatically renew this, but again, it is good to keep an eye on it.
+Every application you run should also have at least one monitoring check. And this whole setup should restart automatically after the server is rebooted but it is good to keep an eye on it. [https://updown.io](https://updown.io/r/vw0un) is my recommended tool for this. I have set it to check for the text “Username” on the page so I know the page is not displaying some error. Another benefit is that it notifies you if the certificate is about to expire. Caddy should automatically renew this, but again, it is good to keep an eye on it.
