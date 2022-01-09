@@ -1,0 +1,63 @@
+---
+layout: post
+title:  "Cheap and selfhosted analytics with Matomo"
+date:   2022-01-10 13:37:00 +0200
+categories: selfhosted
+---
+
+This is my default recipe for self hosted website analytics. I use Matomo, formerly Piwik, and a single VPS at [Hetzner](https://hetzner.cloud/?ref=Fp0GlpkddM38). Their servers currently start at 3,49 euro. Which is  cheap. They have been around for a very long time so this is not some small business that will disappear next year. I don’t want to spent any more time on this than absolutely necessary. Certainly not moving the whole thing somewhere else. Even their largest servers are affordable which may come in handy when your Matomo gets a lot of traffic or your marketing team wants to run complicated analytics on it. They also have backups in the form of snapshots and and external firewall. 
+
+I suggest you start with the smallest VPS and choose the latest Ubuntu LTS release. Then use the web interface to configure a firewall that only allows traffic over ports 22, 80 and 443. This is important because containers can open ports and override iptables firewalls. And I don’t want to risk leaking data because something started a dashboard or some service that isn’t secure. 
+
+Before we install Matomo we need to do 2 things:
+
+1. Install prerequisites
+    
+  {% highlight bash %}
+  apt update && apt install -y docker-compose [docker.io](http://docker.io) vnstat tree unattended-upgrades apt-listchanges fail2ban
+  {% endhighlight %}
+    
+2. Enable automatic updates because this is just basic Ubuntu + Docker and the chance of automatic updates breaking something is really small. 
+   
+  {% highlight bash %}
+  dpkg-reconfigure -plow unattended-upgrades and enable automatic reboot:
+  {% endhighlight %}
+    
+  {% highlight bash %}
+  wget [https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades](https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades) -O /etc/apt/apt.conf.d/50unattended-upgrades
+  {% endhighlight %}
+
+
+Matomo:
+
+You can use named volumes in the docker-compose file but I prefer bind mounts to a local directory. Volumes hide the files somewhere in the Docker directory and with bind mounts you can see the files, check disk usage and make backups. So we need to manually create some directories:
+
+  {% highlight bash %} mkdir -p /opt/matomo/{caddy_config,caddy_data,matomo_data,mysql_db} {% endhighlight %}
+  
+And a docker-compose file:
+
+{% highlight bash %}
+wget [https://raw.githubusercontent.com/AikedeJongste/compose-files/main/Matomo/docker-compose.yml](https://raw.githubusercontent.com/AikedeJongste/compose-files/main/Matomo/docker-compose.yml) -O /opt/matomo/docker-compose.yml
+ {% endhighlight %}
+
+Create an .env file in /opt/matomo:
+
+{% highlight bash %}
+MYSQL_ROOT_PASSWORD=OTZjOGEwMjMy
+MYSQL_DATABASE=matomo
+MYSQL_USER=matomo
+MYSQL_PASSWORD=YTdkMGEyYjVl
+DOMAIN=sub.yourdomain.com
+{% endhighlight %}
+
+Replace the passwords with your own, you can use this command to generate them date +%s | sha256sum | base64 | head -c 12 ; echo
+
+Domain is the url you want to access Matomo on. Make sure you add the dns record beforehand because Caddy will immediately request a certiticate.
+
+Start the whole thing in the foreground with: docker-compose up
+
+I usually check the output for errors and if everything works I stop it and start it in the background with: docker-compose up -d.  
+
+Monitoring:
+
+Every application you run should also have at least one monitoring check. And this whole setup should restart automatically after the server is rebooted but it is good to keep an eye on it. [https://updown.io/r/vw0un](https://updown.io/r/vw0un) is my recommended tool for this. I have set it to check for the text “Username” on the page so I know the page is not displaying some error. Another benefit is that it notifies you if the certificate is about to expire. Caddy should automatically renew this, but again, it is good to keep an eye on it.
