@@ -14,17 +14,18 @@ Before we install Matomo we need to do 2 things:
 1. Install prerequisites
     
   {% highlight bash %}
-  apt update && apt install -y docker-compose [docker.io](http://docker.io) vnstat tree unattended-upgrades apt-listchanges fail2ban
+  apt update && apt install -y docker-compose docker.io \
+  vnstat tree unattended-upgrades apt-listchanges fail2ban
   {% endhighlight %}
     
 2. Enable automatic updates because this is just basic Ubuntu + Docker and the chance of automatic updates breaking something is really small. 
    
   {% highlight bash %}
-  dpkg-reconfigure -plow unattended-upgrades and enable automatic reboot:
+  dpkg-reconfigure -plow unattended-upgrades
   {% endhighlight %}
     
   {% highlight bash %}
-  wget [https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades](https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades) -O /etc/apt/apt.conf.d/50unattended-upgrades
+  wget https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades -O /etc/apt/apt.conf.d/50unattended-upgrades
   {% endhighlight %}
 
 
