@@ -1,11 +1,11 @@
 ---
 layout: post
-title:  "Cheap and selfhosted analytics with Matomo"
+title:  "Self hosted analytics with Matomo"
 date:   2022-01-10 13:37:00 +0200
 categories: selfhosted
 ---
 
-This is my default recipe for self hosted website analytics. I use Matomo, formerly Piwik, and a single VPS at [Hetzner](https://hetzner.cloud/?ref=Fp0GlpkddM38). Their servers currently start at 3,49 euro. Which is  cheap. They have been around for a very long time so this is not some small business that will disappear next year. I don’t want to spent any more time on this than absolutely necessary. Certainly not moving the whole thing somewhere else. Even their largest servers are affordable which may come in handy when your Matomo gets a lot of traffic or your marketing team wants to run complicated analytics on it. They also have backups in the form of snapshots and and external firewall. 
+This is my default recipe for self hosted website analytics. I use Matomo, formerly Piwik, and a single VPS at [Hetzner](https://hetzner.cloud/?ref=Fp0GlpkddM38). Their servers currently start at 4,15 euro. They have been around for a very long time so this is not some small business that will disappear next year. I don’t want to spent any more time on this than absolutely necessary. Certainly not moving the whole thing somewhere else. Even their largest servers are affordable which may come in handy when your Matomo gets a lot of traffic or your marketing team wants to run complicated analytics on it. They also have backups in the form of snapshots and and external firewall. 
 
 I suggest you start with the smallest VPS and choose the latest Ubuntu LTS release. Then use the web interface to configure a firewall that only allows traffic over ports 22, 80 and 443. This is important because containers can open ports and override iptables firewalls. And I don’t want to risk leaking data because something started a dashboard or some service that isn’t secure. 
 
@@ -37,11 +37,49 @@ You can use named volumes in the docker-compose file but I prefer bind mounts to
 
 {% highlight bash %} mkdir -p /opt/matomo/{caddy_config,caddy_data,matomo_data,mysql_db} {% endhighlight %}
   
-And a docker-compose file:
+And a docker-compose file, you can get it with this line or copy and paste it:
 
 {% highlight bash %}
 wget https://raw.githubusercontent.com/AikedeJongste/compose-files/main/Matomo/docker-compose.yml -O /opt/matomo/docker-compose.yml
 {% endhighlight %}
+
+{% highlight bash %}
+version: '3.7'
+
+services:
+  web:
+    image: caddy:2
+    restart: always
+    command: caddy reverse-proxy --from $DOMAIN --to app:80
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy_data:/data
+      - ./caddy_config:/config
+    depends_on:
+      - app
+
+  app:
+    image: matomo:latest
+    restart: always
+    volumes:
+      - ./matomo_data:/var/www/html
+    environment:
+      MATOMO_DATABASE_HOST: db
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:10
+    command: --max-allowed-packet=64MB
+    restart: always
+    volumes:
+      - ./mysql_db:/var/lib/mysql
+    env_file:
+      - .env
+{% endhighlight %}
+      
 
 Create an .env file in /opt/matomo:
 
