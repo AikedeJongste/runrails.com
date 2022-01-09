@@ -29,7 +29,7 @@ Before we install Matomo we need to do 2 things:
   {% endhighlight %}
 
 
-Matomo:
+## Directories:
 
 You can use named volumes in the docker-compose file but I prefer bind mounts to a local directory. Volumes hide the files somewhere in the Docker directory and with bind mounts you can see the files, check disk usage and make backups. So we need to manually create some directories:
 
@@ -51,14 +51,26 @@ MYSQL_PASSWORD=YTdkMGEyYjVl
 DOMAIN=sub.yourdomain.com
 {% endhighlight %}
 
-Replace the passwords with your own, you can use this command to generate them date +%s | sha256sum | base64 | head -c 12 ; echo
+Replace the passwords with your own, you can use this command to generate them 
 
-Domain is the url you want to access Matomo on. Make sure you add the dns record beforehand because Caddy will immediately request a certiticate.
+{% highlight bash %}
+date +%s | sha256sum | base64 | head -c 12 ; echo
+{% endhighlight %}
 
-Start the whole thing in the foreground with: docker-compose up
 
-I usually check the output for errors and if everything works I stop it and start it in the background with: docker-compose up -d.  
+DOMAIN is the url you want to access Matomo on. Make sure you add the dns record beforehand because Caddy will immediately request a certiticate. I usually use some short subdomain. For example m.runrails.com.
 
-Monitoring:
+## Start containers
+
+Start the whole thing in the foreground with: 
+
+{% highlight bash %} docker-compose up {% endhighlight %}
+
+I usually check the output for errors and if everything works I stop it and start it in the background with: 
+
+{% highlight bash %} docker-compose up -d{% endhighlight %}
+  
+
+## Monitoring:
 
 Every application you run should also have at least one monitoring check. And this whole setup should restart automatically after the server is rebooted but it is good to keep an eye on it. [https://updown.io/r/vw0un](https://updown.io/r/vw0un) is my recommended tool for this. I have set it to check for the text “Username” on the page so I know the page is not displaying some error. Another benefit is that it notifies you if the certificate is about to expire. Caddy should automatically renew this, but again, it is good to keep an eye on it.
