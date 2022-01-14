@@ -100,7 +100,7 @@ DOMAIN=sub.yourdomain.com
 Replace the passwords with your own, you can use this command to generate new passwords. 
 
 {% highlight bash %}
-date +%s | sha256sum | base64 | head -c 12 ; echo
+tr -dc '[:alnum:]' </dev/urandom | head -c 12; echo
 {% endhighlight %}
 
 
