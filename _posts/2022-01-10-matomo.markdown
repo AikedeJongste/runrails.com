@@ -15,20 +15,20 @@ I suggest you start with the smallest VPS and choose the latest Ubuntu LTS relea
 
 ## Ubuntu basics:
 
-1. Install prerequisites
+Login over SSH and install some prerequisites:
     
   {% highlight bash %}
   apt update && apt install -y docker-compose docker.io \
   vnstat tree unattended-upgrades apt-listchanges fail2ban
   {% endhighlight %}
     
-2. Enable automatic updates because this is just basic Ubuntu + Docker and the chance of automatic updates breaking something is really small. 
+Enable automatic updates because this is just basic Ubuntu + Docker and the chance of automatic updates breaking something is really small. 
    
   {% highlight bash %}
   dpkg-reconfigure -plow unattended-upgrades
   {% endhighlight %}
    
-  I have a sample config for automatic upgrades that updates everything, automatically removes old packages and reboots when necessary. You can get it [here](https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades) or download it to the right location with:
+I have a sample config for automatic upgrades that updates everything, automatically removes old packages and reboots when necessary. You can get it [here](https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades) or download it to the right location with:
    
   {% highlight bash %}
   wget https://raw.githubusercontent.com/AikedeJongste/ubuntu-configs/main/2004/50unattended-upgrades -O /etc/apt/apt.conf.d/50unattended-upgrades
@@ -41,7 +41,7 @@ You can use named volumes in the docker-compose file but I prefer bind mounts to
 
 {% highlight bash %} mkdir -p /opt/matomo/{caddy_config,caddy_data,matomo_data,mysql_db} {% endhighlight %}
   
-And a docker-compose file, you can get it with this line or copy and paste it:
+And a docker-compose file, you can download it with this line or copy and paste it:
 
 {% highlight bash %}
 wget https://raw.githubusercontent.com/AikedeJongste/compose-files/main/Matomo/docker-compose.yml -O /opt/matomo/docker-compose.yml
@@ -95,14 +95,14 @@ MYSQL_PASSWORD=YTdkMGEyYjVl
 DOMAIN=sub.yourdomain.com
 {% endhighlight %}
 
-Replace the passwords with your own, you can use this command to generate them 
+Replace the passwords with your own, you can use this command to generate new passwords. 
 
 {% highlight bash %}
 date +%s | sha256sum | base64 | head -c 12 ; echo
 {% endhighlight %}
 
 
-DOMAIN is the url you want to access Matomo on. Make sure you add the dns record beforehand because Caddy will immediately request a certiticate. I usually use some short subdomain. For example m.runrails.com.
+DOMAIN is the url you want to access Matomo on. Make sure you add the dns record beforehand because Caddy will immediately request a certiticate. I usually use some short subdomain. For example a.runrails.com.
 
 ## Start containers:
 
@@ -113,8 +113,12 @@ Start the whole thing in the foreground with:
 I usually check the output for errors and if everything works I stop it and start it in the background with: 
 
 {% highlight bash %} docker-compose up -d{% endhighlight %}
+
+## Configure Matomo
+
+You should now be able to access Matomo on the url you specified in the DOMAIN variable. It will ask some questions like the database username and password. Use the same ones as in the ENV file and you should be good to go.
   
 
 ## Monitoring:
 
-Every application you run should also have at least one monitoring check. And this whole setup should restart automatically after the server is rebooted but it is good to keep an eye on it. [https://updown.io](https://updown.io/r/vw0un) is my recommended tool for this. I have set it to check for the text “Username” on the page so I know the page is not displaying some error. Another benefit is that it notifies you if the certificate is about to expire. Caddy should automatically renew this, but again, it is good to keep an eye on it.
+Every application you run should also have at least one monitoring check. Especially the ones that have automatic server updates enabled like we did here. [https://updown.io](https://updown.io/r/vw0un) is my recommended tool for this. I have  mine set it to check for the text “Username” on the page so I know the page is not displaying some error. Another benefit is that it notifies you if the certificate is about to expire. Caddy should automatically renew this, but again, it is good to keep an eye on it.
