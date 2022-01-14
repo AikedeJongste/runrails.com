@@ -41,11 +41,13 @@ You can use named volumes in the docker-compose file but I prefer bind mounts to
 
 {% highlight bash %} mkdir -p /opt/matomo/{caddy_config,caddy_data,matomo_data,mysql_db} {% endhighlight %}
   
-And a docker-compose file, you can download it with this line or copy and paste it:
+And a docker-compose file, you can download it with this line:
 
 {% highlight bash %}
 wget https://raw.githubusercontent.com/AikedeJongste/compose-files/main/Matomo/docker-compose.yml -O /opt/matomo/docker-compose.yml
 {% endhighlight %}
+
+or copy and paste it:
 
 {% highlight bash %}
 version: '3.7'
