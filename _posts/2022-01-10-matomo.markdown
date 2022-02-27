@@ -84,6 +84,11 @@ services:
       - ./mysql_db:/var/lib/mysql
     env_file:
       - .env
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 {% endhighlight %}
       
 
