@@ -40,7 +40,7 @@ secret_key = File.open('secret_key.txt', &:readline).strip</pre>
 
 The next thing we need is the current time in the right format:
 
-<pre class="lang:default decode:true">time = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S'</pre>
+<pre class="lang:default decode:true">time = Time.now.utc.strftime('%Y-%m-%dT%H:%M:%S')</pre>
 
 And the Ticketmatic account name:
 
